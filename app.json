@@ -1,0 +1,33 @@
+{
+    "name": "Derby Names Generator",
+    "description": "Roller derby name generator using FastAPI and Markov chains",
+    "repository": "https://github.com/yourusername/derby-names-nicegui",
+    "keywords": [
+        "python",
+        "fastapi",
+        "nicegui",
+        "markov-chains",
+        "roller-derby"
+    ],
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ],
+    "env": {
+        "API_PORT": {
+            "description": "Port for the FastAPI backend",
+            "value": "8001"
+        },
+        "STORAGE_SECRET": {
+            "description": "Secret key for NiceGUI storage (change in production)",
+            "generator": "secret"
+        }
+    },
+    "formation": {
+        "web": {
+            "quantity": 1,
+            "size": "eco"
+        }
+    }
+}

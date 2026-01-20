@@ -23,3 +23,6 @@ dev = [
     "pytest-cov>=4.1.0",
     "pre-commit>=4.0.0",
 ]
+production = [
+    "gunicorn>=21.0.0",
+]
