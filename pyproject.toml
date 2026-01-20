@@ -1,0 +1,25 @@
+[project]
+name = "derbynames"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.115.0",
+    "sqlmodel>=0.0.22",
+    "uvicorn>=0.32.0",
+    "nicegui>=2.5.0",
+    "markovify>=0.9.4",
+    "httpx>=0.28.0",
+    "wordcloud>=1.9.3",
+    "pillow>=10.0.0",
+    "pydantic-settings>=2.12.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "pre-commit>=4.0.0",
+]

@@ -1,0 +1,38 @@
+version: 2
+updates:
+  # Python dependencies via pip
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      pytest:
+        patterns:
+          - "pytest*"
+      fastapi:
+        patterns:
+          - "fastapi"
+          - "uvicorn"
+          - "httpx"
+      sqlmodel:
+        patterns:
+          - "sqlmodel"
+      nicegui:
+        patterns:
+          - "nicegui"
+    labels:
+      - "dependencies"
+      - "python"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "github-actions"
