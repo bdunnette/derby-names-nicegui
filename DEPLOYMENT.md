@@ -257,6 +257,177 @@ Add this button to your README.md:
 - ⚠️ **Build time**: First deployment may take several minutes
 - ✅ **Auto-deploy**: Enable GitHub integration for automatic deployments
 
+### Option 7: Dokku Deployment (Self-Hosted Heroku Alternative)
+
+Dokku is a self-hosted Platform-as-a-Service (PaaS) that uses Heroku buildpacks. Perfect for deploying on your own VPS.
+
+#### Prerequisites
+- VPS with Ubuntu (DigitalOcean, Linode, AWS EC2, etc.)
+- Domain name (optional but recommended)
+- SSH access to server
+
+#### Server Setup
+
+1. **Install Dokku** (on your VPS):
+   ```bash
+   # For Ubuntu 22.04/24.04
+   wget -NP . https://dokku.com/install/v0.34.8/bootstrap.sh
+   sudo DOKKU_TAG=v0.34.8 bash bootstrap.sh
+
+   # Set up SSH keys
+   cat ~/.ssh/id_rsa.pub | ssh root@your-server "sudo dokku ssh-keys:add admin"
+   ```
+
+2. **Configure Domain** (optional):
+   ```bash
+   # On server
+   dokku domains:set-global your-domain.com
+   ```
+
+#### Deploy Application
+
+1. **Create App** (on server):
+   ```bash
+   dokku apps:create derby-names
+   ```
+
+2. **Add Git Remote** (on local machine):
+   ```bash
+   git remote add dokku dokku@your-server:derby-names
+   ```
+
+3. **Set Environment Variables** (on server):
+   ```bash
+   dokku config:set derby-names API_PORT=8001
+   dokku config:set derby-names STORAGE_SECRET=$(openssl rand -hex 32)
+   ```
+
+4. **Deploy**:
+   ```bash
+   git push dokku main
+   ```
+
+#### Database Setup
+
+**Install PostgreSQL Plugin**:
+```bash
+# On server
+sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
+
+# Create database
+dokku postgres:create derby-db
+
+# Link to app
+dokku postgres:link derby-db derby-names
+```
+
+#### SSL/HTTPS Setup
+
+**Using Let's Encrypt** (free):
+```bash
+# Install Let's Encrypt plugin
+sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
+
+# Set email for Let's Encrypt
+dokku letsencrypt:set derby-names email your@email.com
+
+# Enable HTTPS
+dokku letsencrypt:enable derby-names
+
+# Auto-renew
+dokku letsencrypt:cron-job --add
+```
+
+#### Scaling
+
+```bash
+# Scale to multiple processes
+dokku ps:scale derby-names web=2
+
+# Check running processes
+dokku ps:report derby-names
+```
+
+#### Monitoring
+
+```bash
+# View logs
+dokku logs derby-names --tail
+
+# View app info
+dokku apps:info derby-names
+
+# Check resource usage
+dokku ps:report derby-names
+```
+
+#### Custom Domain
+
+```bash
+# Add custom domain
+dokku domains:add derby-names api.your-domain.com
+
+# Remove default domain
+dokku domains:remove derby-names derby-names.your-server.com
+```
+
+#### Persistent Storage
+
+```bash
+# Create storage directory
+sudo mkdir -p /var/lib/dokku/data/storage/derby-names
+
+# Mount storage
+dokku storage:mount derby-names /var/lib/dokku/data/storage/derby-names:/app/data
+```
+
+#### Zero-Downtime Deploys
+
+```bash
+# Enable zero-downtime deployment
+dokku checks:enable derby-names
+
+# Configure health check
+dokku checks:set derby-names web /api/names
+```
+
+#### Useful Commands
+
+```bash
+# Restart app
+dokku ps:restart derby-names
+
+# Rebuild app
+dokku ps:rebuild derby-names
+
+# Run commands in app container
+dokku run derby-names python -c "print('Hello')"
+
+# Access database
+dokku postgres:connect derby-db
+
+# Backup database
+dokku postgres:export derby-db > backup.sql
+
+# Restore database
+dokku postgres:import derby-db < backup.sql
+```
+
+#### Configuration Files
+
+Dokku uses the same files as Heroku:
+- **Procfile**: Already configured
+- **runtime.txt**: Already configured
+- **app.json**: Already configured
+
+#### Important Notes
+- ✅ **Full control**: You own the infrastructure
+- ✅ **Cost-effective**: Pay only for VPS (typically $5-10/month)
+- ✅ **Heroku-compatible**: Uses same buildpacks and Procfile
+- ✅ **PostgreSQL included**: Free database with postgres plugin
+- ⚠️ **Requires VPS**: Need to manage your own server
+- ⚠️ **API only**: NiceGUI UI still has WebSocket limitations
+
 ## Environment Variables
 
 Create a `.env` file for production:
