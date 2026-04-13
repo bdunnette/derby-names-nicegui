@@ -12,7 +12,7 @@ dependencies = [
     "markovify>=0.9.4",
     "httpx>=0.28.0",
     "wordcloud>=1.9.3",
-    "pillow>=10.0.0",
+    "pillow>=12.2.0",
     "pydantic-settings>=2.12.0",
 ]
 
