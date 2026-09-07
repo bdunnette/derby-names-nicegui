@@ -15,8 +15,8 @@ Note: NiceGUI UI cannot be deployed on PythonAnywhere free tier due to WebSocket
 Only the FastAPI backend will be available.
 """
 
-import sys
 import os
+import sys
 
 # ============================================================================
 # CONFIGURATION - Update these paths with your PythonAnywhere username

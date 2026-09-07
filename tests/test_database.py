@@ -1,6 +1,7 @@
 """Tests for database operations."""
 
-from sqlmodel import SQLModel, create_engine, Session, select
+from sqlmodel import Session, SQLModel, create_engine, select
+
 from database import get_session
 from models import DerbyName
 

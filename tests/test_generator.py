@@ -1,6 +1,7 @@
 """Tests for the DerbyNameGenerator."""
 
 from unittest.mock import Mock
+
 from generator import get_generator
 
 
