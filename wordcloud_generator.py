@@ -1,9 +1,10 @@
 """Word cloud generation for derby names."""
 
-import io
 import base64
-from wordcloud import WordCloud
+import io
+
 import httpx
+from wordcloud import WordCloud
 
 # API base URL
 API_BASE = "http://localhost:8001/api"
