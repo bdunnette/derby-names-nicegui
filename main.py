@@ -1,9 +1,10 @@
-from datetime import timezone
-import httpx
-from nicegui import ui, app
-from datetime import datetime
-import uvicorn
 import threading
+from datetime import UTC, datetime
+
+import httpx
+import uvicorn
+from nicegui import app, ui
+
 from config import settings
 
 API_BASE = f"http://localhost:{settings.API_PORT}/api"
@@ -62,7 +63,7 @@ class DerbyNameApp:
         # Create name entry with metadata
         name_entry = {
             "name": name,
-            "created_at": datetime.now(timezone.utc),
+            "created_at": datetime.now(UTC),
             "is_favorite": False,
             "id": len(names) + 1,  # Simple ID generation
         }
@@ -91,7 +92,7 @@ class DerbyNameApp:
 
                 ui.notify(f"Generated: {self.current_name}", type="positive")
         except Exception as e:
-            ui.notify(f"Error generating name: {str(e)}", type="negative")
+            ui.notify(f"Error generating name: {e!s}", type="negative")
             print(f"Error: {e}")
 
     def refresh_names_display(self):
@@ -120,7 +121,7 @@ class DerbyNameApp:
             ui.notify("Name deleted", type="positive")
             self.refresh_names_display()
         except Exception as e:
-            ui.notify(f"Error deleting name: {str(e)}", type="negative")
+            ui.notify(f"Error deleting name: {e!s}", type="negative")
 
     def toggle_favorite(self, name_id: int):
         """Toggle favorite status of a name in app.storage."""
@@ -134,43 +135,43 @@ class DerbyNameApp:
 
             self.refresh_names_display()
         except Exception as e:
-            ui.notify(f"Error toggling favorite: {str(e)}", type="negative")
+            ui.notify(f"Error toggling favorite: {e!s}", type="negative")
 
     def create_name_card(self, name_data: dict):
         """Create a card for a single derby name."""
-        with ui.card().classes(
-            "w-full p-4 hover:shadow-lg transition-shadow bg-white dark:bg-gray-700"
+        with (
+            ui.card().classes(
+                "w-full p-4 hover:shadow-lg transition-shadow bg-white dark:bg-gray-700"
+            ),
+            ui.row().classes("w-full items-center justify-between"),
         ):
-            with ui.row().classes("w-full items-center justify-between"):
-                # Name and favorite star
-                with ui.row().classes("items-center gap-2 flex-grow"):
-                    star_icon = "⭐" if name_data["is_favorite"] else "☆"
-                    ui.button(
-                        star_icon,
-                        on_click=lambda nid=name_data["id"]: self.toggle_favorite(nid),
-                    ).props("flat round dense").classes("text-xl")
+            # Name and favorite star
+            with ui.row().classes("items-center gap-2 flex-grow"):
+                star_icon = "⭐" if name_data["is_favorite"] else "☆"
+                ui.button(
+                    star_icon,
+                    on_click=lambda nid=name_data["id"]: self.toggle_favorite(nid),
+                ).props("flat round dense").classes("text-xl")
 
-                    ui.label(name_data["name"]).classes(
-                        "text-lg font-semibold text-purple-700 dark:text-purple-300"
+                ui.label(name_data["name"]).classes(
+                    "text-lg font-semibold text-purple-700 dark:text-purple-300"
+                )
+
+            # Created date and delete button
+            with ui.row().classes("items-center gap-2"):
+                try:
+                    dt = datetime.fromisoformat(
+                        name_data["created_at"].replace("Z", "+00:00")
                     )
+                    date_str = dt.strftime("%Y-%m-%d %H:%M")
+                except Exception:
+                    date_str = name_data["created_at"]
 
-                # Created date and delete button
-                with ui.row().classes("items-center gap-2"):
-                    try:
-                        dt = datetime.fromisoformat(
-                            name_data["created_at"].replace("Z", "+00:00")
-                        )
-                        date_str = dt.strftime("%Y-%m-%d %H:%M")
-                    except Exception:
-                        date_str = name_data["created_at"]
-
-                    ui.label(date_str).classes(
-                        "text-sm text-gray-500 dark:text-gray-400"
-                    )
-                    ui.button(
-                        icon="delete",
-                        on_click=lambda nid=name_data["id"]: self.delete_name(nid),
-                    ).props("flat round dense color=red-6")
+                ui.label(date_str).classes("text-sm text-gray-500 dark:text-gray-400")
+                ui.button(
+                    icon="delete",
+                    on_click=lambda nid=name_data["id"]: self.delete_name(nid),
+                ).props("flat round dense color=red-6")
 
     async def build_ui(self):
         """Build the NiceGUI interface."""

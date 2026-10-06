@@ -1,8 +1,10 @@
 """Tests for SQLModel models."""
 
-import pytest
 from datetime import datetime
+
+import pytest
 from sqlmodel import select
+
 from models import DerbyName, DerbyNameCreate, DerbyNameResponse
 
 

@@ -1,12 +1,12 @@
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlmodel import Session, select
-from typing import List
 import asyncio
 
-from models import DerbyName, DerbyNameCreate, DerbyNameResponse
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from sqlmodel import Session, select
+
 from database import get_session, init_db
 from generator import get_generator
+from models import DerbyName, DerbyNameCreate, DerbyNameResponse
 
 # Create FastAPI app
 app = FastAPI(title="Derby Name Generator API")
@@ -84,7 +84,7 @@ def generate_name(session: Session = Depends(get_session)):
     return db_name
 
 
-@app.get("/api/names", response_model=List[DerbyNameResponse])
+@app.get("/api/names", response_model=list[DerbyNameResponse])
 def get_names(session: Session = Depends(get_session)):
     """Get all saved derby names."""
     statement = select(DerbyName).order_by(DerbyName.created_at.desc())
