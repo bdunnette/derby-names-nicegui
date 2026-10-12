@@ -1,7 +1,8 @@
 """Simplified word cloud page with auto-load and colorful names."""
 
-import httpx
 import json
+
+import httpx
 
 # API base URL
 API_BASE = "http://localhost:8001/api"
