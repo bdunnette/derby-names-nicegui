@@ -1,5 +1,6 @@
-from sqlmodel import SQLModel, create_engine, Session
 from pathlib import Path
+
+from sqlmodel import Session, SQLModel, create_engine
 
 # Create database directory if it doesn't exist
 DB_DIR = Path(__file__).parent / "data"
