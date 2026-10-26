@@ -1,8 +1,9 @@
-import markovify
-import httpx
-from pathlib import Path
-import random
 import json
+import random
+from pathlib import Path
+
+import httpx
+import markovify
 
 
 class DerbyNameGenerator:
